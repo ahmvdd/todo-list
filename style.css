@@ -404,6 +404,7 @@ i:hover {
 
   .box button {
     padding: 10px 15px;
+    height: 42px;
     font-size: 13px;
   }
 
