@@ -19,7 +19,6 @@ function updateTaskData() {
     }
 
     localStorage.setItem('taskData', JSON.stringify(taskData));
-    console.log("Données mises à jour:", taskData);
 }
 
 function saveTasks() {
@@ -53,13 +52,14 @@ function addTaskToDOM(taskText) {
     li.appendChild(deleteIcon);
     content.appendChild(li);
 
-    li.addEventListener("click", function () {
-        this.classList.toggle("done");
-        saveTasks();
+    li.addEventListener("click", function (e) {
+        if (e.target !== deleteIcon) {
+            this.classList.toggle("done");
+            saveTasks();
+        }
     });
 }
 
-// Wait for the DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", () => {
     // Simulate loading screen
     setTimeout(() => {
@@ -118,4 +118,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load existing tasks
     loadTasks();
+
+    // Statistics page functionality
+    const taskChart = document.getElementById('taskChart');
+    if (taskChart) {
+        const ctx = taskChart.getContext('2d');
+        const lastSevenDays = taskData.labels.slice(-7);
+        const lastSevenCounts = taskData.taskCounts.slice(-7);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: lastSevenDays,
+                datasets: [{
+                    label: 'Nombre de tâches',
+                    data: lastSevenCounts,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }
+            }
+        });
+    }
+
+    // Back button functionality on statistics page
+    const backButton = document.getElementById('backButton');
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            console.log('Bouton cliqué');
+            window.location.href = 'index.html';
+        });
+    }
 });
